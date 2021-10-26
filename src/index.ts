@@ -98,7 +98,8 @@ export const getEq = <A extends Sum.AnyMember>(eqs: Eqs<A>): Eq<A> =>
  *
  * assert.strictEqual(ordWeather.compare(Rain(1), Rain(1)), 0)
  * assert.strictEqual(ordWeather.compare(Rain(1), Sun()), -1)
- * assert.strictEqual(ordWeather.compare(Rain(1), Rain(2)), 1)
+ * assert.strictEqual(ordWeather.compare(Rain(1), Rain(2)), -1)
+ * assert.strictEqual(ordWeather.compare(Rain(2), Rain(1)), 1)
  *
  * @since 0.1.0
  */
