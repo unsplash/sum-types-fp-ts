@@ -20,19 +20,15 @@ type Value<A> = A extends Sum.Member<any, infer B> ? B : never
 // types i.e. passing generics as type arguments.
 
 type Eqs<A extends Sum.AnyMember> = {
-  readonly [B in A as Value<B> extends undefined ? never : Tag<B>]: Eq<Value<B>>
+  readonly [B in A as Value<B> extends null ? never : Tag<B>]: Eq<Value<B>>
 }
 
 type Ords<A extends Sum.AnyMember> = {
-  readonly [B in A as Value<B> extends undefined ? never : Tag<B>]: Ord<
-    Value<B>
-  >
+  readonly [B in A as Value<B> extends null ? never : Tag<B>]: Ord<Value<B>>
 }
 
 type Shows<A extends Sum.AnyMember> = {
-  readonly [B in A as Value<B> extends undefined ? never : Tag<B>]: Show<
-    Value<B>
-  >
+  readonly [B in A as Value<B> extends null ? never : Tag<B>]: Show<Value<B>>
 }
 
 /**
@@ -149,9 +145,9 @@ export const getShow = <A extends Sum.AnyMember>(shows: Shows<A>): Show<A> => ({
     // lesser evil between:
     //   1. Test for the member tag in `shows`, and hope the consumer hasn't
     //      supplied any extras. (This is what we're doing.)
-    //   2. Test the member value against `undefined`, and hope the consumer
-    //      hasn't defined a member for which the value actually can tangibly
-    //      be undefined e.g. `Member<'Rain', number | undefined>`.
+    //   2. Test the member value against `null`, and hope the consumer hasn't
+    //      defined a member for which the value actually can tangibly be `null`
+    //      e.g. `Member<'Rain', number | null>`.
     return k in shows
       ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
         `${k} ${shows[k as keyof typeof shows].show(v as any)}`
