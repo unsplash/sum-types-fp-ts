@@ -2,7 +2,7 @@
   "private": true,
   "name": "@unsplash/sum-types-fp-ts",
   "description": "fp-ts bindings for @unsplash/sum-types.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "author": "Unsplash",
   "repository": {
