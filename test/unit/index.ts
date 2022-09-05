@@ -31,8 +31,8 @@ describe("index", () => {
 
     it("always returns false on different members", () => {
       expect(f(A(1), C(1))).toBe(false)
-      expect(f(B(), C(1))).toBe(false)
-      expect(f(B(), D())).toBe(false)
+      expect(f(B, C(1))).toBe(false)
+      expect(f(B, D)).toBe(false)
     })
 
     it("compares same members using provided Eq instance", () => {
@@ -60,23 +60,23 @@ describe("index", () => {
     expect(Num.Ord.compare(1, 2)).toBe(LT)
 
     it("compares different members alphabetically", () => {
-      expect(f(B(), D())).toBe(LT)
-      expect(f(D(), B())).toBe(GT)
+      expect(f(B, D)).toBe(LT)
+      expect(f(D, B)).toBe(GT)
 
       fc.assert(
         fc.property(fc.integer(), fc.integer(), (x, y) => {
           expect(f(A(x), C(y))).toBe(LT)
           expect(f(A(y), C(x))).toBe(LT)
-          expect(f(A(x), B())).toBe(LT)
+          expect(f(A(x), B)).toBe(LT)
           expect(f(C(x), A(y))).toBe(GT)
           expect(f(C(y), A(x))).toBe(GT)
-          expect(f(B(), A(x))).toBe(GT)
+          expect(f(B, A(x))).toBe(GT)
         }),
       )
     })
 
     it("considers same members without values equivalent", () => {
-      expect(f(B(), B())).toBe(EQ)
+      expect(f(B, B)).toBe(EQ)
     })
 
     it("compares same members with values using provided Ord instance", () => {
@@ -92,12 +92,12 @@ describe("index", () => {
     }).show
 
     it("outputs members without values as member names alone", () => {
-      expect(f(B())).toBe("B")
+      expect(f(B)).toBe("B")
 
       const AnyValuelessSum = Sum.create<Sum.Member<string>>()
       fc.assert(
         fc.property(fc.string({ minLength: 1 }), x => {
-          expect(getShow({}).show(AnyValuelessSum.mk[x]())).toBe(x)
+          expect(getShow({}).show(AnyValuelessSum.mk[x])).toBe(x)
         }),
       )
     })
