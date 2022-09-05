@@ -51,7 +51,7 @@ const eqWeather = getEq<Weather>({
 })
 
 assert.strictEqual(eqWeather.equals(Rain(1), Rain(1)), true)
-assert.strictEqual(eqWeather.equals(Rain(1), Sun()), false)
+assert.strictEqual(eqWeather.equals(Rain(1), Sun), false)
 assert.strictEqual(eqWeather.equals(Rain(1), Rain(2)), false)
 ```
 
@@ -90,7 +90,7 @@ const ordWeather = getOrd<Weather>({
 })
 
 assert.strictEqual(ordWeather.compare(Rain(1), Rain(1)), 0)
-assert.strictEqual(ordWeather.compare(Rain(1), Sun()), -1)
+assert.strictEqual(ordWeather.compare(Rain(1), Sun), -1)
 assert.strictEqual(ordWeather.compare(Rain(1), Rain(2)), -1)
 assert.strictEqual(ordWeather.compare(Rain(2), Rain(1)), 1)
 ```
@@ -126,7 +126,7 @@ const showWeather = getShow<Weather>({
   Rain: Num.Show,
 })
 
-assert.strictEqual(showWeather.show(Sun()), 'Sun')
+assert.strictEqual(showWeather.show(Sun), 'Sun')
 assert.strictEqual(showWeather.show(Rain(1)), 'Rain 1')
 ```
 
