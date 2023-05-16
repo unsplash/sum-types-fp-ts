@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+# 0.4.0 (2023-05-16)
+
+Support `@unsplash/sum-types` ^0.4.0.
+
 ## 0.3.0 (2022-09-05)
 
 Support `@unsplash/sum-types` ^0.3.0.
