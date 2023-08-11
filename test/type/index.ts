@@ -8,6 +8,7 @@ import * as Show from "fp-ts/Show"
 import * as Num from "fp-ts/number"
 
 type NonNullary = Sum.Member<"A1"> | Sum.Member<"A2", number>
+type Nullary = Sum.Member<"B1"> | Sum.Member<"B2">
 
 //# getEq requires instances only for members with values
 getEq<NonNullary>({ A2: Num.Eq }) // $ExpectType Eq<NonNullary>
@@ -15,14 +16,23 @@ getEq<NonNullary>({}) // $ExpectError
 getEq<NonNullary>({ A2: Num.Eq as unknown as Eq.Eq<string> }) // $ExpectError
 getEq<NonNullary>({ A1: Num.Eq, A2: Num.Eq }) // $ExpectError
 
+getEq<Nullary>({}) // $ExpectType Eq<Nullary>
+getEq<Nullary>({ A1: Num.Eq }) // $ExpectError
+
 //# getOrd requires instances only for members with values
 getOrd<NonNullary>({ A2: Num.Ord }) // $ExpectType Ord<NonNullary>
 getOrd<NonNullary>({}) // $ExpectError
 getOrd<NonNullary>({ A2: Num.Ord as unknown as Ord.Ord<string> }) // $ExpectError
 getOrd<NonNullary>({ A1: Num.Ord, A2: Num.Ord }) // $ExpectError
 
+getOrd<Nullary>({}) // $ExpectType Ord<Nullary>
+getOrd<Nullary>({ A1: Num.Ord }) // $ExpectError
+
 //# getShow requires instances only for members with values
 getShow<NonNullary>({ A2: Num.Show }) // $ExpectType Show<NonNullary>
 getShow<NonNullary>({}) // $ExpectError
 getShow<NonNullary>({ A2: Num.Show as unknown as Show.Show<string> }) // $ExpectError
 getShow<NonNullary>({ A1: Num.Show, A2: Num.Show }) // $ExpectError
+
+getShow<Nullary>({}) // $ExpectType Show<Nullary>
+getShow<Nullary>({ A1: Num.Show }) // $ExpectError
