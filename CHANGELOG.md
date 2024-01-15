@@ -2,7 +2,11 @@
 
 This project adheres to semantic versioning.
 
-# 0.4.0 (2023-05-16)
+## 0.4.1 (2024-01-15)
+
+Fix excess property checking for nullary sums.
+
+## 0.4.0 (2023-05-16)
 
 Support `@unsplash/sum-types` ^0.4.0.
 
