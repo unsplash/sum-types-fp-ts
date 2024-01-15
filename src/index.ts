@@ -18,18 +18,36 @@ type Value<A> = A extends Sum.Member<any, infer B> ? B : never
 // We're going to be defining a series of very similar-looking mapped types
 // without abstraction owing to TypeScript's lack of support for higher-kinded
 // types i.e. passing generics as type arguments.
+//
+// If a sum is nullary then the reduced input type would be `{}`, which
+// unfortunately disables excess property checking, hence the conditional. We
+// wrap the condition in tuples to avoid distributing over the union.
+//
+// It should be noted that excess property checking won't help us if the input
+// object is first defined elsewhere and then provided to our function. This
+// should be considered an unsafe, unsupported use of this API.
 
-type Eqs<A extends Sum.AnyMember> = {
-  readonly [B in A as Value<B> extends null ? never : Tag<B>]: Eq<Value<B>>
-}
+type Nullary = Sum.Member<string>
 
-type Ords<A extends Sum.AnyMember> = {
-  readonly [B in A as Value<B> extends null ? never : Tag<B>]: Ord<Value<B>>
-}
+type Eqs<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
+  ? Record<string, never>
+  : {
+      readonly [B in A as Value<B> extends null ? never : Tag<B>]: Eq<Value<B>>
+    }
 
-type Shows<A extends Sum.AnyMember> = {
-  readonly [B in A as Value<B> extends null ? never : Tag<B>]: Show<Value<B>>
-}
+type Ords<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
+  ? Record<string, never>
+  : {
+      readonly [B in A as Value<B> extends null ? never : Tag<B>]: Ord<Value<B>>
+    }
+
+type Shows<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
+  ? Record<string, never>
+  : {
+      readonly [B in A as Value<B> extends null ? never : Tag<B>]: Show<
+        Value<B>
+      >
+    }
 
 /**
  * Given an `Eq` instance for each member of `A` for which there's a value,
@@ -66,8 +84,11 @@ export const getEq = <A extends Sum.AnyMember>(eqs: Eqs<A>): Eq<A> =>
 
     const eq = eqs[xk as keyof typeof eqs]
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return eq === undefined || eq.equals(xv as any, yv as any)
+    return (
+      eq === undefined ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (eq as unknown as Eq<Value<A>>).equals(xv as any, yv as any)
+    )
   })
 
 /**
@@ -109,8 +130,10 @@ export const getOrd = <A extends Sum.AnyMember>(ords: Ords<A>): Ord<A> =>
 
     const ord = ords[xk as keyof typeof ords]
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return ord === undefined ? 0 : ord.compare(xv as any, yv as any)
+    return ord === undefined
+      ? 0
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (ord as unknown as Ord<Value<A>>).compare(xv as any, yv as any)
   })
 
 /**
@@ -149,8 +172,9 @@ export const getShow = <A extends Sum.AnyMember>(shows: Shows<A>): Show<A> => ({
     //      defined a member for which the value actually can tangibly be `null`
     //      e.g. `Member<'Rain', number | null>`.
     return k in shows
-      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        `${k} ${shows[k as keyof typeof shows].show(v as any)}`
+      ? `${k} ${(shows[k as keyof typeof shows] as unknown as Show<Value<A>>)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .show(v as any)}`
       : k
   },
 })
