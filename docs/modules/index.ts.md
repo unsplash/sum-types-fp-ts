@@ -127,7 +127,7 @@ const showWeather = getShow<Weather>({
 })
 
 assert.strictEqual(showWeather.show(Sun), 'Sun')
-assert.strictEqual(showWeather.show(Rain(1)), 'Rain 1')
+assert.strictEqual(showWeather.show(Rain(1)), 'Rain(1)')
 ```
 
 Added in v0.1.0

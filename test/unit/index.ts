@@ -103,8 +103,8 @@ describe("index", () => {
     })
 
     it("outputs members with values using provived Show instance", () => {
-      expect(f(A(42))).toBe("A 42")
-      expect(f(C(42))).toBe("C 24")
+      expect(f(A(42))).toBe("A(42)")
+      expect(f(C(42))).toBe("C(24)")
     })
   })
 })
