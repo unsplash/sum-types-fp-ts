@@ -156,7 +156,7 @@ export const getOrd = <A extends Sum.AnyMember>(ords: Ords<A>): Ord<A> =>
  * })
  *
  * assert.strictEqual(showWeather.show(Sun), 'Sun')
- * assert.strictEqual(showWeather.show(Rain(1)), 'Rain 1')
+ * assert.strictEqual(showWeather.show(Rain(1)), 'Rain(1)')
  *
  * @since 0.1.0
  */
@@ -172,9 +172,9 @@ export const getShow = <A extends Sum.AnyMember>(shows: Shows<A>): Show<A> => ({
     //      defined a member for which the value actually can tangibly be `null`
     //      e.g. `Member<'Rain', number | null>`.
     return k in shows
-      ? `${k} ${(shows[k as keyof typeof shows] as unknown as Show<Value<A>>)
+      ? `${k}(${(shows[k as keyof typeof shows] as unknown as Show<Value<A>>)
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .show(v as any)}`
+          .show(v as any)})`
       : k
   },
 })
