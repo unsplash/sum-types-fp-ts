@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 0.4.2 (2024-02-16)
+
+More conformant `Show` instances.
+
 ## 0.4.1 (2024-01-15)
 
 Fix excess property checking for nullary sums.
