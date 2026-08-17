@@ -1,4 +1,4 @@
-/* eslint-disable functional/functional-parameters, functional/no-expression-statement, @typescript-eslint/no-unused-vars */
+/* eslint-disable functional/no-expression-statements, @typescript-eslint/no-unnecessary-type-assertion */
 
 import * as Sum from "@unsplash/sum-types"
 import { getEq, getOrd, getShow } from "../../src/index"

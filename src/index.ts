@@ -1,4 +1,6 @@
 /**
+ * fp-ts bindings for `@unsplash/sum-types`.
+ *
  * @since 0.1.0
  */
 
@@ -29,18 +31,21 @@ type Value<A> = A extends Sum.Member<any, infer B> ? B : never
 
 type Nullary = Sum.Member<string>
 
+// eslint-disable-next-line functional/type-declaration-immutability
 type Eqs<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
   ? Record<string, never>
   : {
       readonly [B in A as Value<B> extends null ? never : Tag<B>]: Eq<Value<B>>
     }
 
+// eslint-disable-next-line functional/type-declaration-immutability
 type Ords<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
   ? Record<string, never>
   : {
       readonly [B in A as Value<B> extends null ? never : Tag<B>]: Ord<Value<B>>
     }
 
+// eslint-disable-next-line functional/type-declaration-immutability
 type Shows<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
   ? Record<string, never>
   : {
@@ -69,7 +74,7 @@ type Shows<A extends Sum.AnyMember> = readonly [A] extends readonly [Nullary]
  * })
  *
  * assert.strictEqual(eqWeather.equals(Rain(1), Rain(1)), true)
- * assert.strictEqual(eqWeather.equals(Rain(1), Sun), false)
+ * assert.strictEqual(eqWeather.equals(Rain(1), Sun(null)), false)
  * assert.strictEqual(eqWeather.equals(Rain(1), Rain(2)), false)
  *
  * @since 0.1.0
@@ -79,15 +84,14 @@ export const getEq = <A extends Sum.AnyMember>(eqs: Eqs<A>): Eq<A> =>
     const [xk, xv] = Sum.serialize(x)
     const [yk, yv] = Sum.serialize(y)
 
-    // eslint-disable-next-line functional/no-conditional-statement
+    // eslint-disable-next-line functional/no-conditional-statements
     if (xk !== yk) return false
 
     const eq = eqs[xk as keyof typeof eqs]
 
     return (
       eq === undefined ||
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (eq as unknown as Eq<Value<A>>).equals(xv as any, yv as any)
+      (eq as unknown as Eq<Value<A>>).equals(xv as Value<A>, yv as Value<A>)
     )
   })
 
@@ -114,7 +118,7 @@ export const getEq = <A extends Sum.AnyMember>(eqs: Eqs<A>): Eq<A> =>
  * })
  *
  * assert.strictEqual(ordWeather.compare(Rain(1), Rain(1)), 0)
- * assert.strictEqual(ordWeather.compare(Rain(1), Sun), -1)
+ * assert.strictEqual(ordWeather.compare(Rain(1), Sun(null)), -1)
  * assert.strictEqual(ordWeather.compare(Rain(1), Rain(2)), -1)
  * assert.strictEqual(ordWeather.compare(Rain(2), Rain(1)), 1)
  *
@@ -125,15 +129,17 @@ export const getOrd = <A extends Sum.AnyMember>(ords: Ords<A>): Ord<A> =>
     const [xk, xv] = Sum.serialize(x)
     const [yk, yv] = Sum.serialize(y)
 
-    // eslint-disable-next-line functional/no-conditional-statement
+    // eslint-disable-next-line functional/no-conditional-statements
     if (xk !== yk) return ordString.compare(xk, yk)
 
     const ord = ords[xk as keyof typeof ords]
 
     return ord === undefined
       ? 0
-      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (ord as unknown as Ord<Value<A>>).compare(xv as any, yv as any)
+      : (ord as unknown as Ord<Value<A>>).compare(
+          xv as Value<A>,
+          yv as Value<A>,
+        )
   })
 
 /**
@@ -155,7 +161,7 @@ export const getOrd = <A extends Sum.AnyMember>(ords: Ords<A>): Ord<A> =>
  *   Rain: Num.Show,
  * })
  *
- * assert.strictEqual(showWeather.show(Sun), 'Sun')
+ * assert.strictEqual(showWeather.show(Sun(null)), 'Sun')
  * assert.strictEqual(showWeather.show(Rain(1)), 'Rain(1)')
  *
  * @since 0.1.0
@@ -172,9 +178,9 @@ export const getShow = <A extends Sum.AnyMember>(shows: Shows<A>): Show<A> => ({
     //      defined a member for which the value actually can tangibly be `null`
     //      e.g. `Member<'Rain', number | null>`.
     return k in shows
-      ? `${k}(${(shows[k as keyof typeof shows] as unknown as Show<Value<A>>)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .show(v as any)})`
+      ? `${k}(${(
+          shows[k as keyof typeof shows] as unknown as Show<Value<A>>
+        ).show(v as Value<A>)})`
       : k
   },
 })
